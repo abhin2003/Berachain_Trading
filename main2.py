@@ -2,12 +2,12 @@ import requests
 import json
 import queue
 from web3 import Web3
-from config import DEX_contract_adress,DEX_abi,HONEY_token_adress,HONEY_token_abi,USDC_token_adress,USDC_token_abi
+from config import DEX_contract_adress,DEX_abi,BERA_token_adress,BERA_token_abi,USDC_token_adress,USDC_token_abi
 
 trade_queue = queue.Queue()
 
-PRIVATE_KEY = "wing walnut nation area wing truly potato step sunny lazy antique share"
-PUBLIC_KEY = "0xE742242A21c9cF853FF6F0B79d69f22C96daa140"
+PRIVATE_KEY = "754eb2dbc7db5078be142fc0c4742999fbcecd6610a0b1108c1db71af20c154b"
+PUBLIC_KEY = "0x7F870265638CC50D08650cd51eB705238D2c8Eb7"
 BERACHAIN_TESTNET_URL = "https://bera-testnet.nodeinfra.com"
 
 
@@ -28,7 +28,7 @@ USDC_contract = web3.eth.contract(address=USDC_token_adress, abi=USDC_token_abi)
 print(trade_contract)
 
 
-HONEY_contract = web3.eth.contract(address=HONEY_token_adress, abi=HONEY_token_abi)
+HONEY_contract = web3.eth.contract(address=BERA_token_adress, abi=BERA_token_abi)
 print(trade_contract)
 
 
@@ -50,18 +50,19 @@ def addtoqueue(amount):
 
 gas_price = get_gas_price()
 
-honey_balance = get_token_balance(HONEY_token_adress, PUBLIC_KEY,HONEY_token_abi)
+bera_balance = get_token_balance(BERA_token_adress, PUBLIC_KEY,BERA_token_abi)
 usdc_balance = get_token_balance(USDC_token_adress, PUBLIC_KEY,USDC_token_abi)
 
 threshold = Web3.to_wei('1158125.1', 'gwei')
 print(threshold)
 
 
+
 def swap_usdc(amount):
     steps_read = [
         {
             "poolIdx": 36000,
-            "base": Web3.to_checksum_address('0x7507c1dc16935b82698e4c63f2746a2fcf994df8'),
+            "base": Web3.to_checksum_address('0x7507c1dc16935B82698e4C63f2746A2fCf994dF8'),
             "quote": Web3.to_checksum_address('0xd6d83af58a19cd14ef3cf6fe848c9a4d21e5727c'),
             "isBuy": True
         }
@@ -70,7 +71,7 @@ def swap_usdc(amount):
     output = trade_contract.functions.previewMultiSwap(steps_read, amount_read).call()
     print(output)
     _minOut = int(output[0] * 0.9 * amount_read)
-    bear_address_checksum = Web3.to_checksum_address('0x0000000000000000000000000000000000000000')
+    bear_address_checksum = Web3.to_checksum_address('0x7507c1dc16935B82698e4C63f2746A2fCf994dF8')
     quote_address_checksum = Web3.to_checksum_address('0xd6d83af58a19cd14ef3cf6fe848c9a4d21e5727c')
     _steps = [
         {
@@ -84,7 +85,7 @@ def swap_usdc(amount):
         'nonce': web3.eth.get_transaction_count(PUBLIC_KEY),
         'chainId': web3.eth.chain_id,
         'gasPrice': int(web3.eth.gas_price * 1.1),
-        'gas': 2000000,
+        'gas': 5000000,
         'value': amount_read
     }
     info = trade_contract.functions.multiSwap(_steps, amount_read, _minOut)
